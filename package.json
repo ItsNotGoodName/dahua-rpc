@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
     "prepack": "npm run build",
     "test": "mocha"
   },
