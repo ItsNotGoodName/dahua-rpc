@@ -29,4 +29,10 @@ describe("rpc", function () {
       expect(uptime.Total).to.be.a("number", "Total Uptime");
     });
   });
+
+  describe("ConfigManager", function () {
+    it("getConfig('Encode')", async function () {
+      await rpc.ConfigManager.getConfig("Encode");
+    });
+  });
 });
