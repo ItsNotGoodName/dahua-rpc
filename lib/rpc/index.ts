@@ -2,6 +2,7 @@ import { RPCBase } from "../rpcBase";
 import { Alarm } from "./Alarm";
 import { AroudWifi } from "./AroudWifi";
 import { AsyncDeviceManager } from "./AsyncDeviceManager";
+import { AudioRecordManager } from "./AudioRecordManager";
 import { AuthPTZ } from "./AuthPTZ";
 import { Backup } from "./Backup";
 import { BlueToothDeviceManager } from "./BlueToothDeviceManager";
@@ -73,6 +74,7 @@ import { ScenicSpot } from "./ScenicSpot";
 import { SDEncrypt } from "./SDEncrypt";
 import { Security } from "./Security";
 import { SnapManager } from "./SnapManager";
+import { Speak } from "./Speak";
 import { Storage } from "./Storage";
 import { StreamUrlService } from "./StreamUrlService";
 import { System } from "./System";
@@ -84,6 +86,7 @@ import { TrafficSnap } from "./TrafficSnap";
 import { TrafficStatistic } from "./TrafficStatistic";
 import { Upgrader } from "./Upgrader";
 import { UpgraderInstall } from "./UpgraderInstall";
+import { UPnPPortmap } from "./UPnPPortmap";
 import { UserManager } from "./UserManager";
 import { UWB } from "./UWB";
 import { vehiclesDistribution } from "./vehiclesDistribution";
@@ -95,6 +98,7 @@ import { WebInit } from "./WebInit";
 import { WideViewControl } from "./WideViewControl";
 import { wire802File } from "./wire802File";
 import { WlanManager } from "./WlanManager";
+import { WorkDirectory } from "./WorkDirectory";
 import { WorkGroup } from "./WorkGroup";
 
 /**
@@ -104,6 +108,7 @@ export class RPC extends RPCBase {
   Alarm = Alarm.bind(this)();
   AroudWifi = AroudWifi.bind(this)();
   AsyncDeviceManager = AsyncDeviceManager.bind(this)();
+  AudioRecordManager = AudioRecordManager.bind(this)();
   AuthPTZ = AuthPTZ.bind(this)();
   Backup = Backup.bind(this)();
   BlueToothDeviceManager = BlueToothDeviceManager.bind(this)();
@@ -175,6 +180,7 @@ export class RPC extends RPCBase {
   SDEncrypt = SDEncrypt.bind(this)();
   Security = Security.bind(this)();
   SnapManager = SnapManager.bind(this)();
+  Speak = Speak.bind(this)();
   Storage = { ...StorageExt.bind(this)(), ...Storage.bind(this)() };
   StreamUrlService = StreamUrlService.bind(this)();
   System = System.bind(this)();
@@ -186,6 +192,7 @@ export class RPC extends RPCBase {
   TrafficStatistic = TrafficStatistic.bind(this)();
   UpgraderInstall = UpgraderInstall.bind(this)();
   Upgrader = Upgrader.bind(this)();
+  UPnPPortmap = UPnPPortmap.bind(this)();
   UserManager = UserManager.bind(this)();
   UWB = UWB.bind(this)();
   vehiclesDistribution = vehiclesDistribution.bind(this)();
@@ -197,6 +204,7 @@ export class RPC extends RPCBase {
   WideViewControl = WideViewControl.bind(this)();
   wire802File = wire802File.bind(this)();
   WlanManager = WlanManager.bind(this)();
+  WorkDirectory = WorkDirectory.bind(this)();
   WorkGroup = WorkGroup.bind(this)();
 }
 
