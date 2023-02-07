@@ -22,12 +22,16 @@ export function WorkDirectory(this: RPCBase) {
         );
       });
     },
+    /**
+     * Gets bitmap for entire month which shows if there is any footage for each day.
+     * @param name Storage path (Ex. /dev/mmc0).
+     */
     getBitmapEx: (
       name: string,
       condition: {
         Channel: number;
-        Types: string[];
-        Events: string;
+        Types: ["dav"] | ["jpg"] | ["dav", "jpg"] | ["jpg", "dav"];
+        Events: "*";
         Year: number;
         Month: number;
       }
