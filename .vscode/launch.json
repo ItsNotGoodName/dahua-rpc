@@ -9,7 +9,8 @@
       "name": "npm: test",
       "request": "launch",
       "runtimeArgs": [
-        "test",
+        "run",
+        "test:all",
       ],
       "runtimeExecutable": "npm",
       "skipFiles": [
