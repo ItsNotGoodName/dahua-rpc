@@ -22,7 +22,7 @@ export enum Code {
 
 export type TRPC = object;
 
-export type TResponse<T = unknown, R = string> = {
+export type TResponse<T = unknown, R = boolean> = {
   id: number;
   error?: { code: number; message: string };
   params: T;
@@ -91,7 +91,7 @@ export class RPCBase {
   /**
    * Send RPC without inspecting response for errors.
    */
-  sendRPCRaw<T, R = string>(rpc: TRPC, uri?: string | null) {
+  sendRPCRaw<T, R = boolean>(rpc: TRPC, uri?: string | null) {
     return axiosInstance.post<TResponse<T, R>>(
       this._baseURL + (uri || this._rpcURI),
       JSON.stringify(rpc)
@@ -101,7 +101,7 @@ export class RPCBase {
   /**
    * Send RPC.
    */
-  sendRPC<T, R = string>(rpc: TRPC, uri?: string | null) {
+  sendRPC<T, R = boolean>(rpc: TRPC, uri?: string | null) {
     return new Promise<TResponse<T, R>>((resolve, reject) => {
       this.sendRPCRaw<T, R>(rpc, uri)
         .then((b) => {
@@ -130,7 +130,7 @@ export class RPCBase {
    * @param methodOrArray Method or an array of methods.
    * @param paramsOrArray Parameter or an array of parameters.
    */
-  send<T, R = string>(
+  send<T, R = boolean>(
     methodOrArray: string[] | string,
     paramsOrArray?: object[] | object | null,
     options?: object,
@@ -170,7 +170,7 @@ export class RPCBase {
    * @param method setup method.
    * @param useCache Use cached response if available.
    */
-  sendSetup<T, R = string>(method: string, useCache = true) {
+  sendSetup<T, R = boolean>(method: string, useCache = true) {
     let data: Record<string, Record<string, Promise<TResponse<T, R>>>> = {};
     return (params?: object, options?: object) => {
       const session = this.getSession();
