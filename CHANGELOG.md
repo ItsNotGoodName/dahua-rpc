@@ -9,8 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Missing modules AudioRecordManager, Speak, UPnPPortmap, and WorkDirectory.
-- Month bitmap utility functions.
+- Added AudioRecordManager, Speak, UPnPPortmap, and WorkDirectory modules.
+- Added month bitmap utility functions.
+- Added fromTimestamp, toTimestamp, and createFindFileCondition utility functions.
+- Added getCookies and getRPCLoadfileURL functions to RPCBase.
+
+### Fixed
+
+- Fixed MediaFileFind module's types.
 
 ## [0.1.0] - 2023-02-04
 

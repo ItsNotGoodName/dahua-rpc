@@ -42,7 +42,7 @@ const axiosInstance = axios.create({
 });
 
 /**
- * Base RPC class that can login and send RPC.
+ * Base RPC class that can send RPC and has the Global module.
  */
 export class RPCBase {
   readonly baseURL;
@@ -55,7 +55,7 @@ export class RPCBase {
   Global = Global.bind(this)();
 
   /**
-   * @param address <IP> or <IP>:<PORT>
+   * @param address ip or ip:port
    */
   constructor(address: string, options: TOptions = {}) {
     this.baseURL = `${options.protocol ?? "http"}://${address}`;
