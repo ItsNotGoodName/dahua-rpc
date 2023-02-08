@@ -23,8 +23,9 @@ export function WorkDirectory(this: RPCBase) {
       });
     },
     /**
-     * Gets bitmap for entire month which shows if there is any footage for each day.
-     * @param name Storage path (Ex. /dev/mmc0).
+     * Gets bitmap for month which shows if there is any footage.
+     * Throws an error if there was no footage.
+     * @param name Storage path (ex. /dev/mmc0).
      */
     getBitmapEx: (
       name: string,

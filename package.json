@@ -5,7 +5,8 @@
   "main": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
   "files": [
-    "dist/**/*"
+    "dist",
+    "util.d.ts"
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
@@ -13,7 +14,9 @@
     "prepack": "npm run build",
     "test": "mocha"
   },
-  "keywords": ["dahua"],
+  "keywords": [
+    "dahua"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/ItsNotGoodName/dahua-rpc.git"
@@ -58,10 +61,12 @@
   },
   "exports": {
     ".": {
-      "default": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/index.js"
-      }
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./util": {
+      "types": "./dist/types/util.d.ts",
+      "default": "./dist/util.js"
     }
   }
 }
