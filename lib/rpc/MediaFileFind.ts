@@ -3,9 +3,9 @@ import { RPCBase } from "../rpcBase";
 export type FindFileCondition = {
   Channel: number;
   Dirs: string[];
-  Types: ["dav" | "jpg"];
-  Order: "Ascent";
-  Redundant: "Exclusion";
+  Types: ["dav" | "jpg"] | ["dav", "jpg"] | ["jpg", "dav"];
+  Order: "Ascent" | string;
+  Redundant: "Exclusion" | string;
   Events: null | string[];
   StartTime: string;
   EndTime: string;

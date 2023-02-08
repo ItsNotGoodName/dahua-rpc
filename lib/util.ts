@@ -33,22 +33,36 @@ export function fromTimestamp(timestamp: string): Date {
 }
 
 export function createFindFileCondition(
-  a: "All" | "Timing" | "Event" | "Alarm" | "Manual" | "Picture",
-  i: { Channel: number; Dirs: string[]; StartTime: string; EndTime: string }
+  {
+    Channel,
+    Dirs,
+    StartTime,
+    EndTime,
+    Redundant,
+    Order,
+  }: {
+    Channel: number;
+    Dirs: string[];
+    StartTime: string;
+    EndTime: string;
+    Order?: string;
+    Redundant?: string;
+  },
+  type: "All" | "Timing" | "Event" | "Alarm" | "Manual" | "Picture" = "All"
 ): FindFileCondition {
   const condition: FindFileCondition = {
-    Channel: i.Channel,
-    StartTime: i.StartTime,
-    EndTime: i.EndTime,
-    Dirs: i.Dirs,
-    Redundant: "Exclusion",
-    Order: "Ascent",
+    Channel,
+    StartTime,
+    EndTime,
+    Dirs,
+    Redundant: Redundant ?? "Exclusion",
+    Order: Order ?? "Ascent",
     Types: ["dav"],
     Flags: [""],
     Events: null,
   };
 
-  switch (a) {
+  switch (type) {
     case "All":
       condition.Types = ["dav"];
       condition.Flags = ["Timing", "Event", "Event", "Manual"];
