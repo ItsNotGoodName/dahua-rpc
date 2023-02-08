@@ -20,7 +20,7 @@ export function Global(this: RPCBase) {
         random: string;
         realm: string;
       }>(data, "/RPC2_Login").then((a) => {
-        this._setSession(a.data.session);
+        this._setSession(username, a.data.session);
         return a.data;
       });
     },
@@ -41,11 +41,6 @@ export function Global(this: RPCBase) {
         }),
         "/RPC2_Login"
       );
-      // .then(() => {
-      // this._jar.setCookieSync("DWebClientSessionID=" + this.getSession(), "/")
-      // this._jar.setCookieSync("username=" + username, "/")
-      // this._jar.setCookieSync("DhWebClientSessionID=", "/")
-      // });
     },
     logout: () => {
       return this.sendRPC(this.rpc("global.logout"), null);

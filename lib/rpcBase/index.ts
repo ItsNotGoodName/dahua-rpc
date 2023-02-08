@@ -33,6 +33,7 @@ export type TResponse<T = unknown, R = boolean> = {
 export type TOptions = {
   protocol?: "http" | "https";
   rpcURI?: string;
+  rpcLoadfileURI?: string;
 };
 
 const axiosInstance = axios.create({
@@ -44,10 +45,12 @@ const axiosInstance = axios.create({
  * Base RPC class that can login and send RPC.
  */
 export class RPCBase {
+  readonly baseURL;
+  readonly rpcURI;
+  readonly rpcLoadfileURL;
   _id = 0;
   _session = "";
-  _baseURL;
-  _rpcURI;
+  _cookies = "";
 
   Global = Global.bind(this)();
 
@@ -55,20 +58,31 @@ export class RPCBase {
    * @param address <IP> or <IP>:<PORT>
    */
   constructor(address: string, options: TOptions = {}) {
-    this._baseURL = `${options.protocol ?? "http"}://${address}`;
-    this._rpcURI = options.rpcURI ?? "/RPC2";
+    this.baseURL = `${options.protocol ?? "http"}://${address}`;
+    this.rpcURI = options.rpcURI ?? "/RPC2";
+    this.rpcLoadfileURL =
+      this.baseURL + (options.rpcLoadfileURI ?? "/RPC_Loadfile");
   }
 
-  _nextID() {
+  _nextID(): number {
     return this._id++;
   }
 
-  _setSession(session: string) {
+  _setSession(username: string, session: string) {
+    this._cookies = `username=${username}; WebClientSessionID=${session}; DWebClientSessionID=${session}; DhWebClientSessionID=${session}`;
     this._session = session;
   }
 
-  getSession() {
+  getSession(): string {
     return this._session;
+  }
+
+  getCookies(): string {
+    return this._cookies;
+  }
+
+  getRPCLoadfileURL(filePath: string): string {
+    return `${this.rpcLoadfileURL}${filePath}`;
   }
 
   /**
@@ -93,7 +107,7 @@ export class RPCBase {
    */
   sendRPCRaw<T, R = boolean>(rpc: TRPC, uri?: string | null) {
     return axiosInstance.post<TResponse<T, R>>(
-      this._baseURL + (uri || this._rpcURI),
+      this.baseURL + (uri || this.rpcURI),
       JSON.stringify(rpc)
     );
   }
