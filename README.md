@@ -84,7 +84,7 @@ RPC_IP=192.168.1.108
 Run tests with the following command.
 
 ```
-npm run test
+npm run test:all
 ```
 
 # To Do
