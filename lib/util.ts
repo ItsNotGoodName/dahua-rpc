@@ -90,3 +90,14 @@ export function createFindFileCondition(
 
   return condition;
 }
+
+export function createCookie(username: string, session: string) {
+  return `username=${username}; WebClientSessionID=${session}; DWebClientSessionID=${session}; DhWebClientSessionID=${session}`;
+}
+
+export function createRPCLoadfileURL(
+  baseURL: string,
+  filePath: string
+): string {
+  return `${baseURL}/RPC_Loadfile${filePath}`;
+}

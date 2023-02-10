@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added AudioRecordManager, Speak, UPnPPortmap, and WorkDirectory modules.
 - Added month bitmap utility functions.
 - Added fromTimestamp, toTimestamp, and createFindFileCondition utility functions.
-- Added getCookies and getRPCLoadfileURL functions to RPCBase.
+- Added createCookie and createRPCLoadfileURL utility functions.
 
 ### Fixed
 
