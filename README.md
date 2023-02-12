@@ -87,6 +87,8 @@ Run tests with the following command.
 npm run test:all
 ```
 
+# [Changelog](https://github.com/ItsNotGoodName/dahua-rpc/blob/master/CHANGELOG.md)
+
 # To Do
 
 - Document how the RPC API works.
