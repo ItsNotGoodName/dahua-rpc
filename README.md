@@ -37,7 +37,7 @@ async function main() {
   // Login
   await rpcLogin.login(username, password);
 
-  print(await rpc.MagicBox.getCPUUsage());
+  print(await rpc.MagicBox.getCPUUsage(0));
   print(await rpc.MagicBox.getDeviceClass());
   print(await rpc.MagicBox.getDeviceType());
   print(await rpc.MagicBox.getHardwareVersion());
