@@ -30,8 +30,18 @@ export class RPCLogin {
   _password = "";
   _retries = 0;
   _keepAliveID?: NodeJS.Timeout;
+  _loginPromise?: Promise<void>;
 
   constructor(readonly rpcBase: RPCBase) {}
+
+  _unregisterSessionInvalid?: () => void;
+
+  _registerSessionInvalid(): void {
+    this._unregisterSessionInvalid = this.rpcBase.hooks.hook(
+      "SessionInvalid",
+      () => this._login()
+    );
+  }
 
   _keepAliveFunc = (() => {
     return this.rpcBase.Global.keepAlive()
@@ -42,18 +52,24 @@ export class RPCLogin {
         if (b.error && b.error.code && b.error.code === 287637504)
           return clearInterval(this._keepAliveID);
         else {
-          // TODO: publish reconnect event
-          this._login().catch(function (e) {
-            console.log(e);
+          this._login().catch((e) => {
+            if (e === Code.PASSWORD_NOT_VALID) {
+              this._logout();
+            }
           });
         }
       });
   }).bind(this);
 
   logout() {
+    this._logout();
+    return this.rpcBase.Global.logout();
+  }
+
+  _logout(): void {
     clearInterval(this._keepAliveID);
     this._keepAliveID = undefined;
-    return this.rpcBase.Global.logout();
+    this._unregisterSessionInvalid && this._unregisterSessionInvalid();
   }
 
   login(
@@ -61,14 +77,22 @@ export class RPCLogin {
     password: string,
     loginType = "Direct",
     clientType?: string
-  ) {
+  ): Promise<void> {
+    if (this._loginPromise) {
+      throw new Error("login operation already in progress");
+    }
+
     this._username = username;
     this._password = password;
     return this._login(loginType, clientType);
   }
 
-  _login(loginType = "Direct", clientType?: string) {
-    return new Promise<null>((resolve, reject) => {
+  _login(loginType = "Direct", clientType?: string): Promise<void> {
+    if (this._loginPromise) {
+      return this._loginPromise;
+    }
+
+    this._loginPromise = new Promise<void>((resolve, reject) => {
       this.rpcBase.Global.firstLogin(this._username, { loginType }, clientType)
         .then((res) => {
           if (
@@ -101,7 +125,8 @@ export class RPCLogin {
             .then(() => {
               clearInterval(this._keepAliveID);
               this._keepAliveID = setInterval(this._keepAliveFunc, 60000);
-              resolve(null);
+              this._unregisterSessionInvalid ?? this._registerSessionInvalid();
+              resolve();
             })
             .catch(function (e) {
               if (
@@ -139,6 +164,17 @@ export class RPCLogin {
             });
         })
         .catch(reject);
-    });
+    })
+      .catch((e) =>
+        this.rpcBase.hooks.callHook("LoginError", e).then(() => {
+          throw e;
+        })
+      )
+      .then(() => this.rpcBase.hooks.callHook("LoginSuccess"))
+      .finally(() => {
+        this._loginPromise = undefined;
+      });
+
+    return this._loginPromise;
   }
 }

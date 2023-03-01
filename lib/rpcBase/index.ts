@@ -1,7 +1,14 @@
 import axios from "axios";
+import { createHooks } from "hookable";
 import http from "http";
 import https from "https";
 import { Global } from "./Global";
+
+export type HooksT = {
+  SessionInvalid: () => void;
+  LoginSuccess: () => void;
+  LoginError: (e: unknown) => void;
+};
 
 export enum Code {
   ERROR_CODE_NOT_SET = 268959743,
@@ -46,6 +53,7 @@ const axiosInstance = axios.create({
 export class RPCBase {
   readonly baseURL;
   readonly rpcURI;
+  readonly hooks;
   _id = 0;
   _session = "";
   _username = "";
@@ -58,6 +66,7 @@ export class RPCBase {
   constructor(address: string, options: TOptions = {}) {
     this.baseURL = `${options.protocol ?? "http"}://${address}`;
     this.rpcURI = options.rpcURI ?? "/RPC2";
+    this.hooks = createHooks<HooksT>();
   }
 
   _nextID(): number {
@@ -107,7 +116,7 @@ export class RPCBase {
   /**
    * Send RPC.
    */
-  sendRPC<T, R = boolean>(rpc: TRPC, uri?: string | null) {
+  sendRPC<T, R = boolean>(rpc: TRPC, uri?: string | null, recurse = false) {
     return new Promise<TResponse<T, R>>((resolve, reject) => {
       this.sendRPCRaw<T, R>(rpc, uri)
         .then((b) => {
@@ -118,12 +127,17 @@ export class RPCBase {
           if (
             b.data.error &&
             b.data.error.code &&
-            Code.SESSION_INVALID === b.data.error.code
+            b.data.error.code === Code.SESSION_INVALID &&
+            !recurse
           ) {
-            // TODO: publish SessionInvalid event
+            this.hooks
+              .callHook("SessionInvalid")
+              .then(() => this.sendRPC<T, R>(rpc, uri, true))
+              .then((value) => resolve(value))
+              .catch(reject);
+          } else {
+            reject(b.data);
           }
-
-          reject(b.data);
         })
         .catch((e) => {
           reject(e);
