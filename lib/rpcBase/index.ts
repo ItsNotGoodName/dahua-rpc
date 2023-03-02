@@ -4,7 +4,7 @@ import http from "http";
 import https from "https";
 import { Global } from "./Global";
 
-export type HooksT = {
+type HooksT = {
   SessionInvalid: () => void;
   LoginSuccess: () => void;
   LoginError: (e: unknown) => void;

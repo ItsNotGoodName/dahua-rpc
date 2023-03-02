@@ -28,7 +28,7 @@ function getAuth(
 export class RPCLogin {
   _username = "";
   _password = "";
-  _retries = 0;
+  _validCredentials = false;
   _keepAliveID?: NodeJS.Timeout;
   _loginPromise?: Promise<void>;
 
@@ -44,21 +44,17 @@ export class RPCLogin {
   }
 
   _keepAliveFunc = (() => {
-    return this.rpcBase.Global.keepAlive()
-      .then(() => {
-        this._retries = 0;
-      })
-      .catch((b) => {
-        if (b.error && b.error.code && b.error.code === 287637504)
-          return clearInterval(this._keepAliveID);
-        else {
-          this._login().catch((e) => {
-            if (e === Code.PASSWORD_NOT_VALID) {
-              this._logout();
-            }
-          });
-        }
-      });
+    return this.rpcBase.Global.keepAlive().catch((b) => {
+      if (b.error && b.error.code && b.error.code === 287637504)
+        return clearInterval(this._keepAliveID);
+      else {
+        this._login().catch((e) => {
+          if (e === Code.PASSWORD_NOT_VALID) {
+            this._logout();
+          }
+        });
+      }
+    });
   }).bind(this);
 
   logout() {
@@ -84,10 +80,15 @@ export class RPCLogin {
 
     this._username = username;
     this._password = password;
+    this._validCredentials = true;
     return this._login(loginType, clientType);
   }
 
   _login(loginType = "Direct", clientType?: string): Promise<void> {
+    if (!this._validCredentials) {
+      throw new Error("invalid credentials");
+    }
+
     if (this._loginPromise) {
       return this._loginPromise;
     }
@@ -165,11 +166,14 @@ export class RPCLogin {
         })
         .catch(reject);
     })
-      .catch((e) =>
-        this.rpcBase.hooks.callHook("LoginError", e).then(() => {
+      .catch((e) => {
+        if (e === Code.USER_NOT_VALID || e === Code.PASSWORD_NOT_VALID) {
+          this._validCredentials = false;
+        }
+        return this.rpcBase.hooks.callHook("LoginError", e).then(() => {
           throw e;
-        })
-      )
+        });
+      })
       .then(() => this.rpcBase.hooks.callHook("LoginSuccess"))
       .finally(() => {
         this._loginPromise = undefined;

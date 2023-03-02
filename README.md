@@ -93,4 +93,3 @@ npm run test:all
 
 - Document how the RPC API works.
 - Finish typing RPC methods.
-- Add event emitter.
