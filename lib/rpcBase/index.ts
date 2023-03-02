@@ -16,7 +16,8 @@ export enum Code {
   METHOD_NOT_FOUND = 268894210,
   REQUEST_INVALID = 268894209,
   REQUEST_INVALID_PARAM = 268894211,
-  SESSION_INVALID = 28763750,
+  SESSION_INVALID_1 = 287637504,
+  SESSION_INVALID_2 = 287637505,
 
   USER_NOT_VALID = 268632070,
   PASSWORD_NOT_VALID = 268632071,
@@ -116,32 +117,31 @@ export class RPCBase {
   /**
    * Send RPC.
    */
-  sendRPC<T, R = boolean>(rpc: TRPC, uri?: string | null, recurse = false) {
-    return new Promise<TResponse<T, R>>((resolve, reject) => {
-      this.sendRPCRaw<T, R>(rpc, uri)
-        .then((b) => {
-          if (b.data.result) {
-            return resolve(b.data);
-          }
+  sendRPC<T, R = boolean>(
+    rpc: TRPC,
+    uri?: string | null,
+    recurse = false
+  ): Promise<TResponse<T, R>> {
+    return this.sendRPCRaw<T, R>(rpc, uri).then((res) => {
+      if (res.data.result) {
+        return res.data;
+      }
 
-          if (
-            b.data.error &&
-            b.data.error.code &&
-            b.data.error.code === Code.SESSION_INVALID &&
-            !recurse
-          ) {
-            this.hooks
-              .callHook("SessionInvalid")
-              .then(() => this.sendRPC<T, R>(rpc, uri, true))
-              .then((value) => resolve(value))
-              .catch(reject);
-          } else {
-            reject(b.data);
-          }
-        })
-        .catch((e) => {
-          reject(e);
-        });
+      if (
+        res.data.error &&
+        res.data.error.code &&
+        (res.data.error.code === Code.SESSION_INVALID_1 ||
+          res.data.error.code === Code.SESSION_INVALID_2) &&
+        !recurse
+      ) {
+        return this.hooks
+          .callHook("SessionInvalid")
+          .then(() =>
+            this.sendRPC({ ...rpc, session: this.getSession() }, uri, true)
+          );
+      }
+
+      throw res.data;
     });
   }
 
